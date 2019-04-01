@@ -66,6 +66,9 @@ func NewCalcCompiler() *CalcCompiler {
 func (cc *CalcCompiler) CompileLine(line string) error {
 	//TODO improve
 
+	line = cleanup(line)
+
+
 	if strings.Contains(line, "=") {
 		e := strings.Split(line, "=")
 
@@ -91,4 +94,8 @@ func (cc *CalcCompiler) CompileLine(line string) error {
 	}
 
 	return nil
+}
+
+func cleanup(line string) string {
+	return strings.ReplaceAll(line, " ", "")
 }

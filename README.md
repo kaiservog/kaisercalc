@@ -1,7 +1,7 @@
 ﻿# Kaisercalc
 
 
-[ ] Remove spaces  
+[X] Remove spaces  
 [X] Change integer to double  
 [ ] Accept expression as arg  
 [ ] functions definition and call  

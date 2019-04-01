@@ -6,8 +6,8 @@ import (
 )
 
 func TestIsNextCharacterNumber(t *testing.T) {
-	
-	if ! IsNextCharacterIsNumber(0, "12a3") {
+
+	if !IsNextCharacterIsNumber(0, "12a3") {
 		t.Errorf("Error")
 	}
 
@@ -23,8 +23,8 @@ func TestIsNextCharacterNumber(t *testing.T) {
 func TestToPostfix(t *testing.T) {
 	s := ConvertToPostfix("5*(6+2)-12/4")
 
-	st := "" 
-	for s.Len() > 0  {
+	st := ""
+	for s.Len() > 0 {
 		st += s.Pop().(string)
 	}
 
@@ -36,8 +36,8 @@ func TestToPostfix(t *testing.T) {
 func TestToPostfixWithVariable(t *testing.T) {
 	s := ConvertToPostfix("5*(6+pi)-12/4")
 
-	st := "" 
-	for s.Len() > 0  {
+	st := ""
+	for s.Len() > 0 {
 		st += s.Pop().(string)
 	}
 
@@ -94,18 +94,14 @@ func TestFunctionCall(t *testing.T) {
 	expected := "35+print"
 
 	st := ""
-	for s.Len() > 0  {
+	for s.Len() > 0 {
 		st += s.Pop().(string)
 	}
 
 	if st != expected {
 		t.Errorf("stacked wrong using function call")
 	}
-	
-}
 
-func TestVariableExpression(t *testing.T) {
-	process("teste.txt")
 }
 
 func TestFloatNumbers(t *testing.T) {
@@ -119,4 +115,8 @@ func TestFloatNumbers(t *testing.T) {
 	if r != "2.1" {
 		t.Errorf("Expression wrong resolution shound be " + "2.1" + " it was " + r)
 	}
+}
+
+func TestArgExpression(t *testing.T) {
+	processExpression("a=2+2; b=a + 1")
 }
