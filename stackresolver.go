@@ -16,17 +16,21 @@ func Resolve(s *stack.Stack, defs *map[string]CalcExp) (string, error) {
 		elm := s.Pop().(string)
 
 		if IsOperator(elm) {
-			a, _ := strconv.Atoi(rs.Pop().(string))
-			b, _ := strconv.Atoi(rs.Pop().(string))
+			a, _ := strconv.ParseFloat(rs.Pop().(string), 64)
+			b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
 
 			if elm == "*" {
-				rs.Push( strconv.Itoa(b * a) )
+				f := fmt.Sprintf("%g", b * a)
+				rs.Push(f)
 			} else if elm == "/" {
-				rs.Push( strconv.Itoa(b / a) )
+				f := fmt.Sprintf("%g", b / a)
+				rs.Push(f)
 			} else if elm == "+" {
-				rs.Push( strconv.Itoa(b + a) )				
+				f := fmt.Sprintf("%g", b + a)
+				rs.Push(f)
 			} else if elm == "-" {
-				rs.Push( strconv.Itoa(b - a) )
+				f := fmt.Sprintf("%g", b - a)
+				rs.Push(f)
 			}
 		} else if isNumber(elm) {
 			rs.Push(elm)
@@ -151,10 +155,10 @@ func isPrecedenceHigher(x, y string) bool {
 	return operatorPrecedence(x) >= operatorPrecedence(y)
 }
 
+
+//is not one character only
 func isNumber(v string) bool {
-	if _, err := strconv.Atoi(v); err == nil {
-		return true
-	} else {
-		return false
-	}
+	//TODO compile regexp pool
+	rc := NewRegexpCalc()
+	return rc.ReExpression.MatchString(v)
 }

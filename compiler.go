@@ -23,7 +23,7 @@ func NewRegexpCalc() *RegexpCalc {
 	c, _ = regexp.Compile("[a-zA-Z_]+")
 	re.ReVariableExpression = c
 
-	c, _ = regexp.Compile("[0-9]+")
+	c, _ = regexp.Compile("[0-9\\.]+")
 	re.ReExpression = c
 
 	c, _ = regexp.Compile("[a-zA-Z_]+\\(.*\\)")
@@ -64,7 +64,7 @@ func NewCalcCompiler() *CalcCompiler {
 }
 
 func (cc *CalcCompiler) CompileLine(line string) error {
-	//TODO improve that part
+	//TODO improve
 
 	if strings.Contains(line, "=") {
 		e := strings.Split(line, "=")
@@ -74,19 +74,14 @@ func (cc *CalcCompiler) CompileLine(line string) error {
 		}
 
 		dom := CalcExp{e[1]}
-
-		if dom.IsExpression(cc.rc) {
-			s := ConvertToPostfix(dom.Exp)
-			result, err := Resolve(s, &cc.Defs)
-			if err != nil {
-				return err
-			}
-			
-			cc.Defs[e[0]] = CalcExp{result}
-
-		} else {
-			cc.Defs[e[0]] = dom
+		s := ConvertToPostfix(dom.Exp)
+		result, err := Resolve(s, &cc.Defs)
+		if err != nil {
+			return err
 		}
+		
+		cc.Defs[e[0]] = CalcExp{result}
+
 	} else {
 		s := ConvertToPostfix(line)
 		_, err := Resolve(s, &cc.Defs)

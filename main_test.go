@@ -107,3 +107,16 @@ func TestFunctionCall(t *testing.T) {
 func TestVariableExpression(t *testing.T) {
 	process("teste.txt")
 }
+
+func TestFloatNumbers(t *testing.T) {
+	defs := make(map[string]CalcExp)
+	r, err := Resolve(ConvertToPostfix("0.5+1.6"), &defs)
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if r != "2.1" {
+		t.Errorf("Expression wrong resolution shound be " + "2.1" + " it was " + r)
+	}
+}
