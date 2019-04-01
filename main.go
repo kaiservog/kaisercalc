@@ -8,7 +8,12 @@ import (
 )
 
 func main() {
-	file, err := os.Open(os.Args[1])
+	p := os.Args[1]
+	process(p)
+}
+
+func process(p string) {
+	file, err := os.Open(p)
 	if err != nil {
 		log.Fatal(err)
 	}

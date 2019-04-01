@@ -103,3 +103,7 @@ func TestFunctionCall(t *testing.T) {
 	}
 	
 }
+
+func TestVariableExpression(t *testing.T) {
+	process("teste.txt")
+}

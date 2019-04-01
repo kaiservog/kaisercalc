@@ -20,7 +20,7 @@ func NewRegexpCalc() *RegexpCalc {
 	c, _ := regexp.Compile("\\w[\\w]*=.*")
 	re.ReDefinitions = c
 
-	c, _ = regexp.Compile("[a-zA-Z_]")
+	c, _ = regexp.Compile("[a-zA-Z_]+")
 	re.ReVariableExpression = c
 
 	c, _ = regexp.Compile("[0-9]+")
@@ -41,7 +41,7 @@ func (ce *CalcExp) IsSpecialExpression(rc *RegexpCalc) bool {
 }
 
 func (ce *CalcExp) IsExpression(rc *RegexpCalc) bool {
-	return !rc.ReVariableExpression.MatchString(ce.Exp)
+	return rc.ReVariableExpression.FindString(ce.Exp) != ""
 }
 
 
