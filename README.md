@@ -2,7 +2,7 @@
 
 
 [ ] Remove spaces  
-[ ] Change integer to double  
+[X] Change integer to double  
 [ ] Accept expression as arg  
 [ ] functions definition and call  
 [ ] imports  
