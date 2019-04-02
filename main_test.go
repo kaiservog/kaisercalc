@@ -120,3 +120,17 @@ func TestFloatNumbers(t *testing.T) {
 func TestArgExpression(t *testing.T) {
 	processExpression("a=2+2; b=a + 1")
 }
+
+func TestStackFunction(t *testing.T) {
+	cc := NewCalcCompiler()
+	cc.CompileLine("mysum(x, y)=x+y")
+
+	if cc.Funcs["mysum"].Exp != "x+y" {
+		t.Error("stack for functions failed")
+	}
+
+	if len(cc.Funcs["mysum"].Args) != 2 {
+		t.Error("stack for functions failed")
+	}
+
+}
