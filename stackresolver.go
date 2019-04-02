@@ -35,7 +35,8 @@ func resolve(s *stack.Stack, defs *map[string]exp, funcs *map[string]funcExp) (s
 		} else if isNumber(elm) {
 			rs.Push(elm)
 		} else if isSystemFunction(elm) {
-			fmt.Println(rs.Pop())
+			arg := rs.Pop()
+			fmt.Println(arg)
 		} else if isDefinedFunction(elm, funcs) {
 			r, err := callDefinedFunction(elm, rs, funcs)
 			if err != nil {
@@ -73,7 +74,7 @@ func callDefinedFunction(name string, s *stack.Stack, funcs *map[string]funcExp)
 		funcVars[name] = exp{s.Pop().(string)}
 	}
 
-	newStack := ConvertToPostfix((*funcs)[name].Exp, funcs)
+	newStack := convertToPostfix((*funcs)[name].Exp, funcs)
 	return resolve(newStack, &funcVars, funcs)
 }
 
@@ -96,7 +97,7 @@ func showStack(s *stack.Stack) {
 	}
 }
 
-func ConvertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
+func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 	s := stack.New()
 	temp := stack.New()
 	buffer := ""
@@ -105,7 +106,7 @@ func ConvertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 		c := string([]rune(exp)[i])
 
 		if isNumber(c) || isVariablePart(c) {
-			if IsNextCharNumberOrDefinitions(i, exp) {
+			if isNextCharNumberOrDefinitions(i, exp) {
 				buffer += c
 			} else {
 				if isSystemFunction(buffer + c) {
@@ -144,7 +145,7 @@ func ConvertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 		s.Push(temp.Pop())
 	}
 
-	//invertendo
+	//reversing
 	for s.Len() > 0 {
 		temp.Push(s.Pop())
 	}
@@ -192,14 +193,15 @@ func operatorPrecedence(op string) int {
 		return 3
 	}
 
+	//functions will return 5
 	return 5
 }
 
-func IsNextCharacterIsNumber(i int, s string) bool {
+func isNextCharacterIsNumber(i int, s string) bool {
 	return i+1 < len(s) && isNumber(string([]rune(s)[i+1]))
 }
 
-func IsNextCharNumberOrDefinitions(i int, s string) bool {
+func isNextCharNumberOrDefinitions(i int, s string) bool {
 	if i+1 >= len(s) {
 		return false
 	}

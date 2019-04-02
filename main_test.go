@@ -7,21 +7,21 @@ import (
 
 func TestIsNextCharacterNumber(t *testing.T) {
 
-	if !IsNextCharacterIsNumber(0, "12a3") {
+	if !isNextCharacterIsNumber(0, "12a3") {
 		t.Errorf("Error")
 	}
 
-	if IsNextCharacterIsNumber(1, "12a3") {
+	if isNextCharacterIsNumber(1, "12a3") {
 		t.Errorf("Error")
 	}
 
-	if IsNextCharacterIsNumber(3, "12a3") {
+	if isNextCharacterIsNumber(3, "12a3") {
 		t.Errorf("Error")
 	}
 }
 
 func TestToPostfix(t *testing.T) {
-	s := ConvertToPostfix("5*(6+2)-12/4", nil)
+	s := convertToPostfix("5*(6+2)-12/4", nil)
 
 	st := ""
 	for s.Len() > 0 {
@@ -34,7 +34,7 @@ func TestToPostfix(t *testing.T) {
 }
 
 func TestToPostfixWithVariable(t *testing.T) {
-	s := ConvertToPostfix("5*(6+pi)-12/4", nil)
+	s := convertToPostfix("5*(6+pi)-12/4", nil)
 
 	st := ""
 	for s.Len() > 0 {
@@ -48,7 +48,7 @@ func TestToPostfixWithVariable(t *testing.T) {
 
 func TestResolveExpression(t *testing.T) {
 	defs := make(map[string]exp)
-	r, err := resolve(ConvertToPostfix("5*(6+2)-12/4", nil), &defs, nil)
+	r, err := resolve(convertToPostfix("5*(6+2)-12/4", nil), &defs, nil)
 
 	if err != nil {
 		t.Errorf(err.Error())
@@ -63,7 +63,7 @@ func TestResolveExpressionWithDefinitions(t *testing.T) {
 	defs := make(map[string]exp)
 	defs["pi"] = exp{"3"}
 
-	s := ConvertToPostfix("2*pi+5", nil)
+	s := convertToPostfix("2*pi+5", nil)
 	r, err := resolve(s, &defs, nil)
 
 	if err != nil {
@@ -90,7 +90,7 @@ func TestExpression(t *testing.T) {
 }
 
 func TestFunctionCall(t *testing.T) {
-	s := ConvertToPostfix("print(3+5)", nil)
+	s := convertToPostfix("print(3+5)", nil)
 	expected := "35+print"
 
 	st := ""
@@ -106,7 +106,7 @@ func TestFunctionCall(t *testing.T) {
 
 func TestFloatNumbers(t *testing.T) {
 	vars := make(map[string]exp)
-	r, err := resolve(ConvertToPostfix("0.5+1.6", nil), &vars, nil)
+	r, err := resolve(convertToPostfix("0.5+1.6", nil), &vars, nil)
 
 	if err != nil {
 		t.Errorf(err.Error())

@@ -27,7 +27,7 @@ func newCompiler() *compiler {
 	return cc
 }
 
-func (cc *compiler) checkDuplicate(name string) error {
+func (cc *compiler) checkDuplicateName(name string) error {
 	if _, ok := (*cc.Funcs)[name]; ok {
 		return errors.New("name already defined (" + name + ")")
 	}
@@ -50,7 +50,7 @@ func (cc *compiler) CompileLine(line string) error {
 
 		if strings.Contains(leftSide, "(") { //It's a function
 			name := strings.Split(leftSide, "(")[0]
-			err := cc.checkDuplicate(name)
+			err := cc.checkDuplicateName(name)
 			if err != nil {
 				return err
 			}
@@ -58,13 +58,13 @@ func (cc *compiler) CompileLine(line string) error {
 			(*cc.Funcs)[name] = newFuncExp(leftSide, rightSide, cc)
 
 		} else { //It's a variable
-			err := cc.checkDuplicate(leftSide)
+			err := cc.checkDuplicateName(leftSide)
 			if err != nil {
 				return err
 			}
 
 			expr := exp{rightSide}
-			s := ConvertToPostfix(expr.Exp, cc.Funcs)
+			s := convertToPostfix(expr.Exp, cc.Funcs)
 			result, err := resolve(s, cc.Vars, cc.Funcs)
 			if err != nil {
 				return err
@@ -74,7 +74,7 @@ func (cc *compiler) CompileLine(line string) error {
 		}
 
 	} else {
-		s := ConvertToPostfix(line, nil)
+		s := convertToPostfix(line, nil)
 		_, err := resolve(s, cc.Vars, cc.Funcs)
 		if err != nil {
 			return err
