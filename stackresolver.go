@@ -9,7 +9,7 @@ import (
 	"github.com/golang-collections/collections/stack"
 )
 
-func resolve(s *stack.Stack, defs *map[string]calcExp, funcs *map[string]calcFuncExp) (string, error) {
+func resolve(s *stack.Stack, defs *map[string]exp, funcs *map[string]funcExp) (string, error) {
 	rs := stack.New()
 
 	for s.Len() > 0 {
@@ -66,15 +66,15 @@ func getReverseArr(a []string) []string {
 	return r
 }
 
-func callDefinedFunction(name string, s *stack.Stack, funcs *map[string]calcFuncExp) (string, error) {
-	fDefs := make(map[string]calcExp)
-	reversed_args := getReverseArr((*funcs)[name].Args)
-	for _, name := range reversed_args {
-		fDefs[name] = calcExp{s.Pop().(string)}
+func callDefinedFunction(name string, s *stack.Stack, funcs *map[string]funcExp) (string, error) {
+	funcVars := make(map[string]exp)
+	reversedArgs := getReverseArr((*funcs)[name].Args)
+	for _, name := range reversedArgs {
+		funcVars[name] = exp{s.Pop().(string)}
 	}
 
 	newStack := ConvertToPostfix((*funcs)[name].Exp, funcs)
-	return resolve(newStack, &fDefs, funcs)
+	return resolve(newStack, &funcVars, funcs)
 }
 
 func showStack(s *stack.Stack) {
@@ -96,7 +96,7 @@ func showStack(s *stack.Stack) {
 	}
 }
 
-func ConvertToPostfix(exp string, funcs *map[string]calcFuncExp) *stack.Stack {
+func ConvertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 	s := stack.New()
 	temp := stack.New()
 	buffer := ""
@@ -167,7 +167,7 @@ func isSystemFunction(s string) bool {
 	return s == "print"
 }
 
-func isDefinedFunction(name string, funcs *map[string]calcFuncExp) bool {
+func isDefinedFunction(name string, funcs *map[string]funcExp) bool {
 	if funcs != nil {
 		_, ok := (*funcs)[name]
 		return ok
@@ -214,9 +214,8 @@ func isPrecedenceHigher(x, y string) bool {
 	return operatorPrecedence(x) >= operatorPrecedence(y)
 }
 
-//is not one character only
-func isNumber(v string) bool {
+func isNumber(val string) bool {
 	//TODO compile regexp pool
-	rc := NewRegexpCalc()
-	return rc.ReExpression.MatchString(v)
+	p := newPattern()
+	return p.expression.MatchString(val)
 }

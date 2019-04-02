@@ -19,7 +19,7 @@ func main() {
 func processExpression(exp string) {
 	exps := strings.Split(exp, ";")
 	if len(exps) > 0 {
-		cc := newCalcCompiler()
+		cc := newCompiler()
 
 		for _, ln := range exps {
 			process(ln, cc)
@@ -34,7 +34,7 @@ func processFile(p string) {
 	}
 	defer file.Close()
 
-	cc := newCalcCompiler()
+	cc := newCompiler()
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		ln := scanner.Text()
@@ -46,7 +46,7 @@ func processFile(p string) {
 	}
 }
 
-func process(ln string, cc *CalcCompiler) {
+func process(ln string, cc *compiler) {
 	err := cc.CompileLine(ln)
 	if err != nil {
 		log.Fatal(err)
