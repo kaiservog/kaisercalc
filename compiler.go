@@ -37,44 +37,49 @@ func NewRegexpCalc() *RegexpCalc {
 	return re
 }
 
-type CalcExp struct {
+type calcExp struct {
 	Exp string
 }
 
-type CalcFuncExp struct {
+type calcFuncExp struct {
 	Exp  string
 	Args []string
 }
 
-func (ce *CalcExp) IsSpecialExpression(rc *RegexpCalc) bool {
+func (ce *calcExp) isSpecialExpression(rc *RegexpCalc) bool {
 	return rc.ReVariableExpression.MatchString(ce.Exp)
 }
 
-func (ce *CalcExp) IsExpression(rc *RegexpCalc) bool {
+func (ce *calcExp) isExpression(rc *RegexpCalc) bool {
 	return rc.ReVariableExpression.FindString(ce.Exp) != ""
 }
 
-func (ce *CalcExp) IsFunctionCall(rc *RegexpCalc) bool {
+func (ce *calcExp) isFunctionCall(rc *RegexpCalc) bool {
 	return !rc.ReFuncCall.MatchString(ce.Exp)
 }
 
 type CalcCompiler struct {
 	data  string
-	Defs  map[string]CalcExp
-	Funcs map[string]CalcFuncExp
+	Defs  *map[string]calcExp
+	Funcs *map[string]calcFuncExp
 	rc    *RegexpCalc
 }
 
-func NewCalcCompiler() *CalcCompiler {
+func newCalcCompiler() *CalcCompiler {
 	cc := &CalcCompiler{}
-	cc.Defs = make(map[string]CalcExp)
-	cc.Funcs = make(map[string]CalcFuncExp)
+
+	defs := make(map[string]calcExp)
+	funcs := make(map[string]calcFuncExp)
+
+	cc.Defs = &defs
+	cc.Funcs = &funcs
+
 	cc.rc = NewRegexpCalc()
 
 	return cc
 }
 
-func NewCalcFuncExp(name, rs string, cc *CalcCompiler) CalcFuncExp {
+func newCalcFuncExp(name, rs string, cc *CalcCompiler) calcFuncExp {
 	args := cc.rc.ReFuncArgs.FindStringSubmatch(name)
 	if len(args) > 0 {
 		args = strings.Split(args[1], ",") //its group is 0?
@@ -82,16 +87,16 @@ func NewCalcFuncExp(name, rs string, cc *CalcCompiler) CalcFuncExp {
 		args = make([]string, 0)
 	}
 
-	return CalcFuncExp{
+	return calcFuncExp{
 		Exp:  rs,
 		Args: args}
 }
 
 func (cc *CalcCompiler) checkDuplicate(name string) error {
-	if _, ok := cc.Funcs[name]; ok {
+	if _, ok := (*cc.Funcs)[name]; ok {
 		return errors.New("name already defined (" + name + ")")
 	}
-	if _, ok := cc.Defs[name]; ok {
+	if _, ok := (*cc.Defs)[name]; ok {
 		return errors.New("name already defined (" + name + ")")
 	}
 
@@ -115,7 +120,7 @@ func (cc *CalcCompiler) CompileLine(line string) error {
 				return err
 			}
 
-			cc.Funcs[name] = NewCalcFuncExp(leftSide, rightSide, cc)
+			(*cc.Funcs)[name] = newCalcFuncExp(leftSide, rightSide, cc)
 
 		} else { //It's a variable
 			err := cc.checkDuplicate(leftSide)
@@ -123,19 +128,19 @@ func (cc *CalcCompiler) CompileLine(line string) error {
 				return err
 			}
 
-			exp := CalcExp{rightSide}
-			s := ConvertToPostfix(exp.Exp)
-			result, err := Resolve(s, &cc.Defs)
+			exp := calcExp{rightSide}
+			s := ConvertToPostfix(exp.Exp, cc.Funcs)
+			result, err := resolve(s, cc.Defs, cc.Funcs)
 			if err != nil {
 				return err
 			}
 
-			cc.Defs[leftSide] = CalcExp{result}
+			(*cc.Defs)[leftSide] = calcExp{result}
 		}
 
 	} else {
-		s := ConvertToPostfix(line)
-		_, err := Resolve(s, &cc.Defs)
+		s := ConvertToPostfix(line, nil)
+		_, err := resolve(s, cc.Defs, cc.Funcs)
 		if err != nil {
 			return err
 		}

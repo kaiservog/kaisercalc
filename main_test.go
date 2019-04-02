@@ -21,7 +21,7 @@ func TestIsNextCharacterNumber(t *testing.T) {
 }
 
 func TestToPostfix(t *testing.T) {
-	s := ConvertToPostfix("5*(6+2)-12/4")
+	s := ConvertToPostfix("5*(6+2)-12/4", nil)
 
 	st := ""
 	for s.Len() > 0 {
@@ -34,7 +34,7 @@ func TestToPostfix(t *testing.T) {
 }
 
 func TestToPostfixWithVariable(t *testing.T) {
-	s := ConvertToPostfix("5*(6+pi)-12/4")
+	s := ConvertToPostfix("5*(6+pi)-12/4", nil)
 
 	st := ""
 	for s.Len() > 0 {
@@ -47,8 +47,8 @@ func TestToPostfixWithVariable(t *testing.T) {
 }
 
 func TestResolveExpression(t *testing.T) {
-	defs := make(map[string]CalcExp)
-	r, err := Resolve(ConvertToPostfix("5*(6+2)-12/4"), &defs)
+	defs := make(map[string]calcExp)
+	r, err := resolve(ConvertToPostfix("5*(6+2)-12/4", nil), &defs, nil)
 
 	if err != nil {
 		t.Errorf(err.Error())
@@ -60,11 +60,11 @@ func TestResolveExpression(t *testing.T) {
 }
 
 func TestResolveExpressionWithDefinitions(t *testing.T) {
-	defs := make(map[string]CalcExp)
-	defs["pi"] = CalcExp{"3"}
+	defs := make(map[string]calcExp)
+	defs["pi"] = calcExp{"3"}
 
-	s := ConvertToPostfix("2*pi+5")
-	r, err := Resolve(s, &defs)
+	s := ConvertToPostfix("2*pi+5", nil)
+	r, err := resolve(s, &defs, nil)
 
 	if err != nil {
 		t.Errorf(err.Error())
@@ -77,20 +77,20 @@ func TestResolveExpressionWithDefinitions(t *testing.T) {
 
 func TestExpression(t *testing.T) {
 	r := NewRegexpCalc()
-	exp := CalcExp{"1+2-3*4/5"}
+	exp := calcExp{"1+2-3*4/5"}
 
-	if exp.IsSpecialExpression(r) {
+	if exp.isSpecialExpression(r) {
 		t.Errorf("it's not a special expression")
 	}
 
-	exp = CalcExp{"1+2-3*4/var"}
-	if !exp.IsSpecialExpression(r) {
+	exp = calcExp{"1+2-3*4/var"}
+	if !exp.isSpecialExpression(r) {
 		t.Errorf("it's a special expression")
 	}
 }
 
 func TestFunctionCall(t *testing.T) {
-	s := ConvertToPostfix("print(3+5)")
+	s := ConvertToPostfix("print(3+5)", nil)
 	expected := "35+print"
 
 	st := ""
@@ -105,8 +105,8 @@ func TestFunctionCall(t *testing.T) {
 }
 
 func TestFloatNumbers(t *testing.T) {
-	defs := make(map[string]CalcExp)
-	r, err := Resolve(ConvertToPostfix("0.5+1.6"), &defs)
+	defs := make(map[string]calcExp)
+	r, err := resolve(ConvertToPostfix("0.5+1.6", nil), &defs, nil)
 
 	if err != nil {
 		t.Errorf(err.Error())
@@ -122,15 +122,30 @@ func TestArgExpression(t *testing.T) {
 }
 
 func TestStackFunction(t *testing.T) {
-	cc := NewCalcCompiler()
+	cc := newCalcCompiler()
 	cc.CompileLine("mysum(x, y)=x+y")
 
-	if cc.Funcs["mysum"].Exp != "x+y" {
+	if (*cc.Funcs)["mysum"].Exp != "x+y" {
 		t.Error("stack for functions failed")
 	}
 
-	if len(cc.Funcs["mysum"].Args) != 2 {
+	if len((*cc.Funcs)["mysum"].Args) != 2 {
 		t.Error("stack for functions failed")
 	}
 
+}
+
+func TestDeclaredFunctionCall(t *testing.T) {
+	cc := newCalcCompiler()
+	cc.CompileLine("mydiv(x, y)=x/y")
+	cc.CompileLine("result=mydiv(4, 2)+1")
+	cc.CompileLine("print(result)") //should be 6
+}
+
+func TestDeclaredFunctionCall2(t *testing.T) {
+	cc := newCalcCompiler()
+	cc.CompileLine("mysum(x, y)=x+y")
+	cc.CompileLine("age=5")
+	cc.CompileLine("result=mysum(3+age, 2)+1")
+	cc.CompileLine("print(result)") //should be 6
 }
