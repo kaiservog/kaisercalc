@@ -27,7 +27,7 @@ func processExpression(exp string) {
 	}
 }
 
-func processFile(p string) {
+func processFile(p string) *compiler {
 	file, err := os.Open(p)
 	if err != nil {
 		log.Fatal(err)
@@ -44,6 +44,8 @@ func processFile(p string) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	return cc
 }
 
 func process(ln string, cc *compiler) {

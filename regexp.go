@@ -8,6 +8,7 @@ type pattern struct {
 	expression         *regexp.Regexp
 	funcCall           *regexp.Regexp
 	funcArgs           *regexp.Regexp
+	importSyntx        *regexp.Regexp
 }
 
 func newPattern() *pattern {
@@ -16,10 +17,10 @@ func newPattern() *pattern {
 	c, _ := regexp.Compile("\\w[\\w]*=.*")
 	re.definitions = c
 
-	c, _ = regexp.Compile("[a-zA-Z_]+")
+	c, _ = regexp.Compile("[a-zA-Z_\\.]+")
 	re.variableExpression = c
 
-	c, _ = regexp.Compile("[0-9\\.]+")
+	c, _ = regexp.Compile("[0-9][0-9\\.]*")
 	re.expression = c
 
 	c, _ = regexp.Compile("[a-zA-Z_]+\\(.*\\)")
@@ -27,6 +28,9 @@ func newPattern() *pattern {
 
 	c, _ = regexp.Compile(`\((.*)\)`)
 	re.funcArgs = c
+
+	c, _ = regexp.Compile(`import.*`)
+	re.importSyntx = c
 
 	return re
 }

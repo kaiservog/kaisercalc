@@ -41,9 +41,8 @@ func (cc *compiler) checkDuplicateName(name string) error {
 func (cc *compiler) CompileLine(line string) error {
 	//TODO improve
 
-	line = cleanup(line)
-
 	if strings.Contains(line, "=") {
+		line = cleanup(line)
 		e := strings.Split(line, "=")
 		leftSide := e[0]
 		rightSide := e[1]
@@ -72,8 +71,18 @@ func (cc *compiler) CompileLine(line string) error {
 
 			(*cc.Vars)[leftSide] = exp{result}
 		}
+	} else if isImport(line) {
+		names := strings.Split(line, " ")
+		if len(names) != 3 {
+			return errors.New("import syntax must be 'import alias path/to/file'")
+		}
 
+		//tree := strings.Split(names[2], "/")
+		comp := processFile(names[2])
+
+		mixVarsAndFuncs(comp.Vars, cc.Vars, comp.Funcs, cc.Funcs, names[1])
 	} else {
+		line = cleanup(line)
 		s := convertToPostfix(line, nil)
 		_, err := resolve(s, cc.Vars, cc.Funcs)
 		if err != nil {
@@ -84,6 +93,23 @@ func (cc *compiler) CompileLine(line string) error {
 	return nil
 }
 
+func mixVarsAndFuncs(vvSrc, vvTgt *map[string]exp, ffSrc, ffTgt *map[string]funcExp, importName string) {
+	for key, value := range *vvSrc {
+		(*vvTgt)[importName+"."+key] = value
+		//REMOVE THIS
+	}
+
+	for key, value := range *ffSrc {
+		(*ffTgt)[importName+"."+key] = value
+		//REMOVE THIS
+	}
+}
+
 func cleanup(line string) string {
 	return strings.ReplaceAll(line, " ", "")
+}
+
+func isImport(line string) bool {
+	p := newPattern()
+	return p.importSyntx.MatchString(line)
 }

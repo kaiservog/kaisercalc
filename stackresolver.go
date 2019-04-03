@@ -9,7 +9,7 @@ import (
 	"github.com/golang-collections/collections/stack"
 )
 
-func resolve(s *stack.Stack, defs *map[string]exp, funcs *map[string]funcExp) (string, error) {
+func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (string, error) {
 	rs := stack.New()
 
 	for s.Len() > 0 {
@@ -44,7 +44,7 @@ func resolve(s *stack.Stack, defs *map[string]exp, funcs *map[string]funcExp) (s
 			}
 			rs.Push(r)
 		} else { //is definition
-			if def, ok := (*defs)[elm]; ok {
+			if def, ok := (*vars)[elm]; ok {
 				rs.Push(def.Exp)
 			} else {
 				return "", errors.New("variable not defined " + elm)
@@ -156,7 +156,7 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 
 func isVariablePart(t string) bool {
 	//TODO pool of compiled regexp
-	c, _ := regexp.Compile("[a-zA-Z_]")
+	c, _ := regexp.Compile("[a-zA-Z_.]")
 	return c.MatchString(t)
 }
 
@@ -206,7 +206,7 @@ func isNextCharNumberOrDefinitions(i int, s string) bool {
 		return false
 	}
 
-	cre, _ := regexp.Compile("[a-zA-Z_]")
+	cre, _ := regexp.Compile("[a-zA-Z_\\.]")
 	c := string([]rune(s)[i+1])
 
 	return isNumber(c) || cre.MatchString(c)

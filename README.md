@@ -5,8 +5,9 @@
 [X] Change integer to double  
 [X] Accept expression as arg  
 [X] Functions definition and call  
-[ ] return last value in stack
-[ ] imports  
+~~[ ] return last value in stack~~  
+[X] imports  
+[ ] imports should use relative path
 [ ] User manual  
 [ ] Resolve TODOs  
 
