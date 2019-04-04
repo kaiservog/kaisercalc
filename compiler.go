@@ -106,7 +106,8 @@ func mixVarsAndFuncs(vvSrc, vvTgt *map[string]exp, ffSrc, ffTgt *map[string]func
 }
 
 func cleanup(line string) string {
-	return strings.ReplaceAll(line, " ", "")
+	//remover comentarios tb
+	return line //strings.ReplaceAll(line, " ", "")
 }
 
 func isImport(line string) bool {

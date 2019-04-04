@@ -17,19 +17,29 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 
 		if isOperator(elm) {
 			a, _ := strconv.ParseFloat(rs.Pop().(string), 64)
-			b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
-
+			
 			if elm == "*" {
+				b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
 				f := fmt.Sprintf("%g", b*a)
 				rs.Push(f)
 			} else if elm == "/" {
+				b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
 				f := fmt.Sprintf("%g", b/a)
 				rs.Push(f)
 			} else if elm == "+" {
+				b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
 				f := fmt.Sprintf("%g", b+a)
 				rs.Push(f)
 			} else if elm == "-" {
+				b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
 				f := fmt.Sprintf("%g", b-a)
+				rs.Push(f)
+			} else if elm == "^" {
+				b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
+				f := fmt.Sprintf("%g", elevation(b, int(a)))
+				rs.Push(f)
+			} else if elm == "!" {
+				f := fmt.Sprintf("%g", factorial(a))
 				rs.Push(f)
 			}
 		} else if isNumber(elm) {
@@ -56,6 +66,22 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 	}
 
 	return "", nil
+}
+
+func elevation(x float64, y int) float64 {
+	for i :=0; i < y; i++ {
+		x = x*x
+	}
+
+	return x
+}
+
+func factorial(x float64) float64 {
+	if x == 0 {
+		return 1
+	}
+	
+	return x * factorial(x-1)
 }
 
 func getReverseArr(a []string) []string {
@@ -150,7 +176,7 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 		temp.Push(s.Pop())
 	}
 
-	//showStack(temp)
+	showStack(temp)
 	return temp
 }
 
@@ -161,7 +187,7 @@ func isVariablePart(t string) bool {
 }
 
 func isOperator(v string) bool {
-	return v == "+" || v == "-" || v == "*" || v == "/"
+	return v == "+" || v == "-" || v == "*" || v == "/" || v == "^" || v== "!"
 }
 
 func isSystemFunction(s string) bool {
@@ -177,12 +203,20 @@ func isDefinedFunction(name string, funcs *map[string]funcExp) bool {
 }
 
 func operatorPrecedence(op string) int {
+	if op == "^" {
+		return 6
+	}
+
 	if op == "*" {
-		return 4
+		return 5
 	}
 
 	if op == "/" {
 		return 4
+	}
+
+	if op == "!" {
+		return 5
 	}
 
 	if op == "+" {
@@ -190,7 +224,7 @@ func operatorPrecedence(op string) int {
 	}
 
 	if op == "-" {
-		return 3
+		return 2
 	}
 
 	//functions will return 5
