@@ -14,10 +14,9 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 
 	for s.Len() > 0 {
 		elm := s.Pop().(string)
-
 		if isOperator(elm) {
 			a, _ := strconv.ParseFloat(rs.Pop().(string), 64)
-			
+
 			if elm == "*" {
 				b, _ := strconv.ParseFloat(rs.Pop().(string), 64)
 				f := fmt.Sprintf("%g", b*a)
@@ -69,8 +68,8 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 }
 
 func elevation(x float64, y int) float64 {
-	for i :=0; i < y; i++ {
-		x = x*x
+	for i := 0; i < y; i++ {
+		x = x * x
 	}
 
 	return x
@@ -80,7 +79,7 @@ func factorial(x float64) float64 {
 	if x == 0 {
 		return 1
 	}
-	
+
 	return x * factorial(x-1)
 }
 
@@ -110,11 +109,13 @@ func showStack(s *stack.Stack) {
 	fmt.Println()
 	fmt.Println("stack")
 
+	fmt.Print("-")
 	for s.Len() > 0 {
 		value := s.Pop()
-		fmt.Print(value, "-")
+		fmt.Print(value, " ")
 		t.Push(value)
 	}
+	fmt.Print("-")
 	fmt.Println()
 
 	for t.Len() > 0 {
@@ -176,7 +177,8 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 		temp.Push(s.Pop())
 	}
 
-	showStack(temp)
+	//showStack(temp)
+
 	return temp
 }
 
@@ -187,7 +189,7 @@ func isVariablePart(t string) bool {
 }
 
 func isOperator(v string) bool {
-	return v == "+" || v == "-" || v == "*" || v == "/" || v == "^" || v== "!"
+	return v == "+" || v == "-" || v == "*" || v == "/" || v == "^" || v == "!"
 }
 
 func isSystemFunction(s string) bool {
@@ -216,7 +218,7 @@ func operatorPrecedence(op string) int {
 	}
 
 	if op == "!" {
-		return 5
+		return 6
 	}
 
 	if op == "+" {

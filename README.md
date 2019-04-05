@@ -7,6 +7,7 @@
 [X] Functions definition and call  
 ~~[ ] return last value in stack~~  
 [X] imports  
+[X] new operations
 [ ] imports should use relative path
 [ ] User manual  
 [ ] Resolve TODOs  

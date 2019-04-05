@@ -54,7 +54,8 @@ func (cc *compiler) CompileLine(line string) error {
 				return err
 			}
 
-			(*cc.Funcs)[name] = newFuncExp(leftSide, rightSide, cc)
+			f := newFuncExp(leftSide, rightSide, cc)
+			(*cc.Funcs)[name] = f
 
 		} else { //It's a variable
 			err := cc.checkDuplicateName(leftSide)
@@ -79,7 +80,6 @@ func (cc *compiler) CompileLine(line string) error {
 
 		//tree := strings.Split(names[2], "/")
 		comp := processFile(names[2])
-
 		mixVarsAndFuncs(comp.Vars, cc.Vars, comp.Funcs, cc.Funcs, names[1])
 	} else {
 		line = cleanup(line)
@@ -106,11 +106,16 @@ func mixVarsAndFuncs(vvSrc, vvTgt *map[string]exp, ffSrc, ffTgt *map[string]func
 }
 
 func cleanup(line string) string {
-	//remover comentarios tb
-	return line //strings.ReplaceAll(line, " ", "")
+	line = removeComments(line)
+	return strings.ReplaceAll(line, " ", "")
 }
 
 func isImport(line string) bool {
 	p := newPattern()
 	return p.importSyntx.MatchString(line)
+}
+
+func removeComments(line string) string {
+	p := newPattern()
+	return p.comments.ReplaceAllString(line, "")
 }

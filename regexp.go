@@ -9,6 +9,7 @@ type pattern struct {
 	funcCall           *regexp.Regexp
 	funcArgs           *regexp.Regexp
 	importSyntx        *regexp.Regexp
+	comments           *regexp.Regexp
 }
 
 func newPattern() *pattern {
@@ -31,6 +32,9 @@ func newPattern() *pattern {
 
 	c, _ = regexp.Compile(`import.*`)
 	re.importSyntx = c
+
+	c, _ = regexp.Compile(`//.*`)
+	re.comments = c
 
 	return re
 }

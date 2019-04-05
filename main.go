@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	//TODO args validation
+
 	if contains(os.Args, "-e") {
 		processExpression(os.Args[2])
 	} else {
