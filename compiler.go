@@ -11,9 +11,10 @@ type compiler struct {
 	Vars  *map[string]exp
 	Funcs *map[string]funcExp
 	rc    *pattern
+	root  string //local where user call this program
 }
 
-func newCompiler() *compiler {
+func newCompiler(root string) *compiler {
 	cc := &compiler{}
 
 	vars := make(map[string]exp)
@@ -23,7 +24,7 @@ func newCompiler() *compiler {
 	cc.Funcs = &funcs
 
 	cc.rc = newPattern()
-
+	cc.root = root
 	return cc
 }
 
@@ -79,7 +80,12 @@ func (cc *compiler) CompileLine(line string) error {
 		}
 
 		//tree := strings.Split(names[2], "/")
-		comp := processFile(names[2])
+		importPath := names[2]
+		if cc.root != "" {
+			importPath = cc.root + "/" + names[2]
+		}
+
+		comp := processFile(importPath)
 		mixVarsAndFuncs(comp.Vars, cc.Vars, comp.Funcs, cc.Funcs, names[1])
 	} else {
 		line = cleanup(line)

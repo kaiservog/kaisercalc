@@ -21,7 +21,7 @@ func main() {
 func processExpression(exp string) {
 	exps := strings.Split(exp, ";")
 	if len(exps) > 0 {
-		cc := newCompiler()
+		cc := newCompiler("")
 
 		for _, ln := range exps {
 			process(ln, cc)
@@ -30,13 +30,15 @@ func processExpression(exp string) {
 }
 
 func processFile(p string) *compiler {
+	root := extractRoot(p)
+
 	file, err := os.Open(p)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	cc := newCompiler()
+	cc := newCompiler(root)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		ln := scanner.Text()
@@ -48,6 +50,20 @@ func processFile(p string) *compiler {
 	}
 
 	return cc
+}
+
+func extractRoot(p string) string {
+	idx := strings.LastIndex(p, "/")
+	if idx != -1 {
+		return p[:idx-1]
+	}
+
+	idx = strings.LastIndex(p, "\\")
+	if idx != -1 {
+		return p[:idx]
+	}
+
+	return ""
 }
 
 func process(ln string, cc *compiler) {
