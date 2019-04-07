@@ -2,26 +2,27 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
 func main() {
-	//TODO args validation
-
 	if contains(os.Args, "-e") {
 		processExpression(os.Args[2])
-	} else {
+	} else if len(os.Args) > 1 {
 		p := os.Args[1]
 		processFile(p)
+	} else {
+		showHelp()
 	}
 }
 
 func processExpression(exp string) {
 	exps := strings.Split(exp, ";")
 	if len(exps) > 0 {
-		cc := newCompiler("")
+		cc := newCompiler("", true)
 
 		for _, ln := range exps {
 			process(ln, cc)
@@ -38,7 +39,7 @@ func processFile(p string) *compiler {
 	}
 	defer file.Close()
 
-	cc := newCompiler(root)
+	cc := newCompiler(root, false)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		ln := scanner.Text()
@@ -80,4 +81,18 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func showHelp() {
+	help := `Kaisercalc Help
+
+	kaisercalc -e "exp"      to resolve simple expression
+	kaisercalc filename      to resolve expression in file
+	
+	examples
+	kaisercalc -e "(3+1)/(2*3+1)"
+	kaisercalc mymath.txt
+	`
+
+	fmt.Println(help)
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 
 	"github.com/golang-collections/collections/stack"
@@ -11,6 +10,7 @@ import (
 
 func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (string, error) {
 	rs := stack.New()
+	p := newPattern()
 
 	for s.Len() > 0 {
 		elm := s.Pop().(string)
@@ -41,7 +41,7 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 				f := fmt.Sprintf("%g", factorial(a))
 				rs.Push(f)
 			}
-		} else if isNumber(elm) {
+		} else if isNumber(elm, p) {
 			rs.Push(elm)
 		} else if isSystemFunction(elm) {
 			arg := rs.Pop()
@@ -128,12 +128,13 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 	s := stack.New()
 	temp := stack.New()
 	buffer := ""
+	pattn := newPattern()
 
 	for i := 0; i < len(exp); i++ {
 		c := string([]rune(exp)[i])
 
-		if isNumber(c) || isVariablePart(c) {
-			if isNextCharNumberOrDefinitions(i, exp) {
+		if isNumber(c, pattn) || isVariablePart(c, pattn) {
+			if isNextCharNumberOrDefinitions(i, exp, pattn) {
 				buffer += c
 			} else {
 				if isSystemFunction(buffer + c) {
@@ -156,7 +157,7 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 				s.Push(temp.Pop())
 			}
 			temp.Pop()
-		} else if !isNumber(c) {
+		} else if !isNumber(c, pattn) {
 			if temp.Len() == 0 || temp.Peek() == "(" {
 				temp.Push(c)
 			} else {
@@ -182,10 +183,9 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 	return temp
 }
 
-func isVariablePart(t string) bool {
-	//TODO pool of compiled regexp
-	c, _ := regexp.Compile("[a-zA-Z_.]")
-	return c.MatchString(t)
+func isVariablePart(t string, p *pattern) bool {
+	//alterei aqui
+	return p.variableExpression.MatchString(t)
 }
 
 func isOperator(v string) bool {
@@ -205,6 +205,10 @@ func isDefinedFunction(name string, funcs *map[string]funcExp) bool {
 }
 
 func operatorPrecedence(op string) int {
+	if op == "!" {
+		return 7
+	}
+
 	if op == "^" {
 		return 6
 	}
@@ -215,10 +219,6 @@ func operatorPrecedence(op string) int {
 
 	if op == "/" {
 		return 4
-	}
-
-	if op == "!" {
-		return 6
 	}
 
 	if op == "+" {
@@ -233,27 +233,23 @@ func operatorPrecedence(op string) int {
 	return 5
 }
 
-func isNextCharacterIsNumber(i int, s string) bool {
-	return i+1 < len(s) && isNumber(string([]rune(s)[i+1]))
+func isNextCharacterIsNumber(i int, s string, p *pattern) bool {
+	return i+1 < len(s) && isNumber(string([]rune(s)[i+1]), p)
 }
 
-func isNextCharNumberOrDefinitions(i int, s string) bool {
+func isNextCharNumberOrDefinitions(i int, s string, p *pattern) bool {
 	if i+1 >= len(s) {
 		return false
 	}
 
-	cre, _ := regexp.Compile("[a-zA-Z_\\.]")
 	c := string([]rune(s)[i+1])
-
-	return isNumber(c) || cre.MatchString(c)
+	return isNumber(c, p) || p.variableExpression.MatchString(c)
 }
 
 func isPrecedenceHigher(x, y string) bool {
 	return operatorPrecedence(x) >= operatorPrecedence(y)
 }
 
-func isNumber(val string) bool {
-	//TODO compile regexp pool
-	p := newPattern()
+func isNumber(val string, p *pattern) bool {
 	return p.expression.MatchString(val)
 }

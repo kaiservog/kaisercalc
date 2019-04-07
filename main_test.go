@@ -6,16 +6,16 @@ import (
 )
 
 func TestIsNextCharacterNumber(t *testing.T) {
-
-	if !isNextCharacterIsNumber(0, "12a3") {
+	p := newPattern()
+	if !isNextCharacterIsNumber(0, "12a3", p) {
 		t.Errorf("Error")
 	}
 
-	if isNextCharacterIsNumber(1, "12a3") {
+	if isNextCharacterIsNumber(1, "12a3", p) {
 		t.Errorf("Error")
 	}
 
-	if isNextCharacterIsNumber(3, "12a3") {
+	if isNextCharacterIsNumber(3, "12a3", p) {
 		t.Errorf("Error")
 	}
 }
@@ -122,7 +122,7 @@ func TestArgExpression(t *testing.T) {
 }
 
 func TestStackFunction(t *testing.T) {
-	cc := newCompiler()
+	cc := newCompiler("", false)
 	cc.CompileLine("mysum(x, y)=x+y")
 
 	if (*cc.Funcs)["mysum"].Exp != "x+y" {
@@ -136,14 +136,14 @@ func TestStackFunction(t *testing.T) {
 }
 
 func TestDeclaredFunctionCall(t *testing.T) {
-	cc := newCompiler()
+	cc := newCompiler("", false)
 	cc.CompileLine("mydiv(x, y)=x/y")
 	cc.CompileLine("result=mydiv(4, 2)+1")
 	cc.CompileLine("print(result)") //should be 6
 }
 
 func TestDeclaredFunctionCall2(t *testing.T) {
-	cc := newCompiler()
+	cc := newCompiler("", false)
 	cc.CompileLine("mysum(x, y)=x+y")
 	cc.CompileLine("age=5")
 	cc.CompileLine("result=mysum(3+age, 2)+1")

@@ -3,18 +3,20 @@ package main
 import (
 	//	"fmt"
 	"errors"
+	"fmt"
 	"strings"
 )
 
 type compiler struct {
-	data  string
-	Vars  *map[string]exp
-	Funcs *map[string]funcExp
-	rc    *pattern
-	root  string //local where user call this program
+	data      string
+	Vars      *map[string]exp
+	Funcs     *map[string]funcExp
+	rc        *pattern
+	simpleExp bool
+	root      string //local where user call this program
 }
 
-func newCompiler(root string) *compiler {
+func newCompiler(root string, simpleExp bool) *compiler {
 	cc := &compiler{}
 
 	vars := make(map[string]exp)
@@ -25,6 +27,7 @@ func newCompiler(root string) *compiler {
 
 	cc.rc = newPattern()
 	cc.root = root
+	cc.simpleExp = simpleExp
 	return cc
 }
 
@@ -40,8 +43,6 @@ func (cc *compiler) checkDuplicateName(name string) error {
 }
 
 func (cc *compiler) CompileLine(line string) error {
-	//TODO improve
-
 	if strings.Contains(line, "=") {
 		line = cleanup(line)
 		e := strings.Split(line, "=")
@@ -70,7 +71,6 @@ func (cc *compiler) CompileLine(line string) error {
 			if err != nil {
 				return err
 			}
-
 			(*cc.Vars)[leftSide] = exp{result}
 		}
 	} else if isImport(line) {
@@ -90,9 +90,13 @@ func (cc *compiler) CompileLine(line string) error {
 	} else {
 		line = cleanup(line)
 		s := convertToPostfix(line, nil)
-		_, err := resolve(s, cc.Vars, cc.Funcs)
+		r, err := resolve(s, cc.Vars, cc.Funcs)
 		if err != nil {
 			return err
+		}
+
+		if cc.simpleExp {
+			fmt.Println(r)
 		}
 	}
 

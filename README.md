@@ -10,7 +10,7 @@
 [X] new operations
 [X] imports should use relative path
 [ ] User manual  
-[ ] Resolve TODOs  
+[X] Resolve TODOs  
 
-## To thinks  
+## To think  
 * functions are more legible withours "()" like "sqrt x,y= x" or "C n,p = n!/p!(m-p)!" ... "sqrt(x,y)=x" "C(n,p)=n!/p!(m-p)!"
