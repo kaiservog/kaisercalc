@@ -45,9 +45,14 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 		} else if isNumber(elm, p) {
 			rs.Push(elm)
 		} else if isSystemFunction(elm) {
+			reverseStack(rs)
 			for rs.Len() > 0 {
 				arg := rs.Pop()
-				fmt.Println(arg)
+				if elm == "print" {
+					fmt.Print(arg.(string) + " ")
+				} else {
+					fmt.Println(arg)
+				}
 			}
 		} else if isDefinedFunction(elm, funcs) {
 			r, err := callDefinedFunction(elm, rs, funcs)
@@ -194,14 +199,9 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 		s.Push(temp.Pop())
 	}
 
-	//reversing
-	for s.Len() > 0 {
-		temp.Push(s.Pop())
-	}
-
 	//showStack(temp)
-
-	return temp
+	reverseStack(s)
+	return s
 }
 
 func isVariablePart(t string, p *pattern) bool {
@@ -214,7 +214,7 @@ func isOperator(v string) bool {
 }
 
 func isSystemFunction(s string) bool {
-	return s == "print"
+	return s == "print" || s == "println"
 }
 
 func isDefinedFunction(name string, funcs *map[string]funcExp) bool {
