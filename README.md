@@ -12,7 +12,7 @@
 [ ] User manual 
 [X] string support 
 [X] Resolve TODOs  
-[ ] Alter print and add println
+[X] Alter print and add println
 
 ## To think  
 * functions are more legible withours "()" like "sqrt x,y= x" or "C n,p = n!/p!(m-p)!" ... "sqrt(x,y)=x" "C(n,p)=n!/p!(m-p)!"
