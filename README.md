@@ -9,8 +9,10 @@
 [X] imports  
 [X] new operations
 [X] imports should use relative path
-[ ] User manual  
+[ ] User manual 
+[X] string support 
 [X] Resolve TODOs  
+[ ] Alter print and add println
 
 ## To think  
 * functions are more legible withours "()" like "sqrt x,y= x" or "C n,p = n!/p!(m-p)!" ... "sqrt(x,y)=x" "C(n,p)=n!/p!(m-p)!"

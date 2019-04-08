@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/golang-collections/collections/stack"
 )
@@ -44,8 +45,10 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 		} else if isNumber(elm, p) {
 			rs.Push(elm)
 		} else if isSystemFunction(elm) {
-			arg := rs.Pop()
-			fmt.Println(arg)
+			for rs.Len() > 0 {
+				arg := rs.Pop()
+				fmt.Println(arg)
+			}
 		} else if isDefinedFunction(elm, funcs) {
 			r, err := callDefinedFunction(elm, rs, funcs)
 			if err != nil {
@@ -56,7 +59,9 @@ func resolve(s *stack.Stack, vars *map[string]exp, funcs *map[string]funcExp) (s
 			if def, ok := (*vars)[elm]; ok {
 				rs.Push(def.Exp)
 			} else {
-				return "", errors.New("variable not defined " + elm)
+				rs.Push(elm)
+				//if not var so str? good idea?
+				//return "", errors.New("variable not defined " + elm)
 			}
 		}
 	}
@@ -124,6 +129,19 @@ func showStack(s *stack.Stack) {
 	}
 }
 
+//returns first string in expression from start idx
+//return last index from string returned
+func readStr(exp string, idx int) (string, error) {
+	if string(exp[idx]) != "'" {
+		return "", errors.New("First character must be '")
+	}
+
+	subexp := exp[idx:]
+
+	end := strings.Index(subexp[1:], "'")
+	return subexp[1 : end+1], nil
+}
+
 func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 	s := stack.New()
 	temp := stack.New()
@@ -132,7 +150,6 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 
 	for i := 0; i < len(exp); i++ {
 		c := string([]rune(exp)[i])
-
 		if isNumber(c, pattn) || isVariablePart(c, pattn) {
 			if isNextCharNumberOrDefinitions(i, exp, pattn) {
 				buffer += c
@@ -148,6 +165,10 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 					buffer = ""
 				}
 			}
+		} else if c == "'" {
+			r, _ := readStr(exp, i)
+			s.Push(r)
+			i = i + len(r) + 1
 		} else if c == "," {
 			continue
 		} else if c == "(" {

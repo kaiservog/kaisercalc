@@ -117,7 +117,22 @@ func mixVarsAndFuncs(vvSrc, vvTgt *map[string]exp, ffSrc, ffTgt *map[string]func
 
 func cleanup(line string) string {
 	line = removeComments(line)
-	return strings.ReplaceAll(line, " ", "")
+	insideStr := false
+	l := len(line) - 1
+
+	for i := l; i >= 0; i-- { //cannot remove spaces from strings
+		c := string([]rune(line)[i])
+
+		if c == " " && !insideStr {
+			line = line[:i] + line[i+1:]
+		}
+
+		if c == "'" {
+			insideStr = !insideStr
+		}
+	}
+
+	return line
 }
 
 func isImport(line string) bool {
