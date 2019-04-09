@@ -89,7 +89,7 @@ func (cc *compiler) CompileLine(line string) error {
 		mixVarsAndFuncs(comp.Vars, cc.Vars, comp.Funcs, cc.Funcs, names[1])
 	} else {
 		line = cleanup(line)
-		s := convertToPostfix(line, nil)
+		s := convertToPostfix(line, cc.Funcs)
 		r, err := resolve(s, cc.Vars, cc.Funcs)
 		if err != nil {
 			return err

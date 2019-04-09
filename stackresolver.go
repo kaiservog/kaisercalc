@@ -175,7 +175,9 @@ func convertToPostfix(exp string, funcs *map[string]funcExp) *stack.Stack {
 			s.Push(r)
 			i = i + len(r) + 1
 		} else if c == "," {
-			continue
+			for temp.Len() > 0 && temp.Peek() != "(" {
+				s.Push(temp.Pop())
+			}
 		} else if c == "(" {
 			temp.Push(c)
 		} else if c == ")" {

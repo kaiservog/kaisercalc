@@ -149,3 +149,7 @@ func TestDeclaredFunctionCall2(t *testing.T) {
 	cc.CompileLine("result=mysum(3+age, 2)+1")
 	cc.CompileLine("print(result)") //should be 6
 }
+
+func TestTemp(t *testing.T) {
+	processFile("teste.txt")
+}
