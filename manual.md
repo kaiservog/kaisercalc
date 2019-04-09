@@ -9,12 +9,12 @@ there are three types of line to inform you calculations:
 * System functions
 * Imports
 
-**Declare**
+**Declare**  
 It's define the value/function to a variable 
 i.e
 ``PI=3.1415`` or ``months=12`` or setting a functions ``salary(x)=x*12``
 
-**System functions**
+**System functions**  
 There are only two system functions **print** and **println**, they both prints values to the screen.
 * print - prints the value in the screen
 * println - prints the value and jump to a new line in the screen
@@ -40,7 +40,7 @@ taxes(x)=x*0.1+20
 println('employees #', employees, 'payment is', taxes(employees)+salary*employees)
 ```
 
-**imports**
+**imports**  
 Some times you may want to split some data into files like `finance.txt`, `study.txt` or `test02.txt`
 that way you may have the need to import data from another file, for example
 you can have a file to declare some personal data like account ballance, bills info ... when calculating currently month bills value, you can create a file january_bill.txt and import the bills.txt data, now you can access variables and functions defined in the bills.txt, next month you can delete january file and create another one.
@@ -49,7 +49,7 @@ the syntax to use import is `import alias file_name.txt`
 i.e
 `import bills bills.txt` `import prob functions/probs.txt`
 ---
-### Variables
+### Variables  
 Variables must stats with a letter than can has "_" (underscore) in name.
 Can have capital letters or not
 i.e
@@ -65,7 +65,7 @@ in this case the new variables used in function is `minutes_per_episode`, `episo
 All of then must be inside of `( )`in the variable name  
 variables can be defined as text as well, in that case we define them with `''` like `impact_phrase='i am a text'`
 ---
-### System functions
+### System functions  
 Can only be used in lines without a definition, so this code is not correctly
 i.e
 `PI=print('what?')`
@@ -77,18 +77,18 @@ print and println can receive any variable, number or text:
 i.e
 `print(1, 1+1, calc(x), 'hi!', PI)` it prints `1 2 3 hi! 5`
 ---
-### Calling kaisercalc
-**file**
+### Calling kaisercalc  
+**file**  
 Just use `kaisercalc filename`
 i.e
 `kaisercalc mycalc.txt` or in Windows `kaisercalc.exe mycalc.txt`
 
-**simple expression**
+**simple expression**  
 You can use kaisercalc to resolve expression in CLI, in that case use the argument `-e` `kaisercalc -e "expression"`
 i.e
 `kaisercalc -e "9/(2+1)"`
 ---
-### Imports
+### Imports  
 The syntax to use import is `import alias file_name.txt`
 i.e
 `import bills bills.txt` `import prob functions/probs.txt`
