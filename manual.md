@@ -40,7 +40,8 @@ taxes(x)=x*0.1+20
 println('employees #', employees, 'payment is', taxes(employees)+salary*employees)
 ```
 
-**imports**  
+**imports**
+
 Some times you may want to split some data into files like `finance.txt`, `study.txt` or `test02.txt`
 that way you may have the need to import data from another file, for example
 you can have a file to declare some personal data like account ballance, bills info ... when calculating currently month bills value, you can create a file january_bill.txt and import the bills.txt data, now you can access variables and functions defined in the bills.txt, next month you can delete january file and create another one.  
