@@ -1,12 +1,13 @@
 ## Kaisercalc purpose
     
-Kaisercalc is a solution for resolving calculations that is a pain in the a** to resolve in simple calculators, it provides variable/function definition. It reads files with math expression and can print the result and can resolve math expression in one line CMD.
+Kaisercalc is a solution for resolving calculations that is a pain in the a** to resolve in simple calculators, it provides variable/function definition. It reads files with math expression and can print the result and can resolve math expression in one line CLI.
 
 ---
-### line types
-there are two types of line to inform you calculations:
+### Line types
+there are three types of line to inform you calculations:
 * Declare
 * System functions
+* Imports
 
 **Declare**
 It's define the value/function to a variable 
@@ -32,12 +33,21 @@ i.e
 `print('the result is', 42)` it prints `the result is 42`
 
 so an example of a calculation file looks like
-`
-    employees= 120
-    salary=2200
-    taxes(x)=x*0.1+20
-    println('employees #', employees, 'payment is', taxes(employees)+salary*employees)
-`
+```
+employees= 120
+salary=2200
+taxes(x)=x*0.1+20
+println('employees #', employees, 'payment is', taxes(employees)+salary*employees)
+```
+
+**imports**
+Some times you may want to split some data into files like `finance.txt`, `study.txt` or `test02.txt`
+that way you may have the need to import data from another file, for example
+you can have a file to declare some personal data like account ballance, bills info ... when calculating currently month bills value, you can create a file january_bill.txt and import the bills.txt data, now you can access variables and functions defined in the bills.txt, next month you can delete january file and create another one.
+
+the syntax to use import is `import alias file_name.txt`
+i.e
+`import bills bills.txt` `import prob functions/probs.txt`
 ---
 ### Variables
 Variables must stats with a letter than can has "_" (underscore) in name.
@@ -47,7 +57,10 @@ i.e
 
 if the set of a variable is a functions it must inform the new variables used in function
 i.e
-`calc_serie_time(minutes_per_episode, episodes, breaks)=minutes_per_episode*episodes + breaks*episodes*5`
+`
+calc_serie_time(minutes_per_episode, episodes, breaks)=minutes_per_episode*episodes + breaks*episodes*5
+`
+
 in this case the new variables used in function is `minutes_per_episode`, `episodes` and `breaks`; 
 All of then must be inside of `( )`in the variable name  
 variables can be defined as text as well, in that case we define them with `''` like `impact_phrase='i am a text'`
@@ -64,7 +77,30 @@ print and println can receive any variable, number or text:
 i.e
 `print(1, 1+1, calc(x), 'hi!', PI)` it prints `1 2 3 hi! 5`
 ---
-### Using kaisercalc
-...
+### Calling kaisercalc
+**file**
+Just use `kaisercalc filename`
+i.e
+`kaisercalc mycalc.txt` or in Windows `kaisercalc.exe mycalc.txt`
 
+**simple expression**
+You can use kaisercalc to resolve expression in CLI, in that case use the argument `-e` `kaisercalc -e "expression"`
+i.e
+`kaisercalc -e "9/(2+1)"`
+---
+### Imports
+The syntax to use import is `import alias file_name.txt`
+i.e
+`import bills bills.txt` `import prob functions/probs.txt`
 
+To use a variable from another file imported you must specify the `alias.` and then use variable name 
+i.e
+`free=bills.salary-2000` `print(foods.broccoli_kcal)`
+
+i.e in a file
+```
+import tx imp/taxes.txt
+import f finance.txt
+
+print(tx.discount(f.salary))
+```
