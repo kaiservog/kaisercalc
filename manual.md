@@ -4,7 +4,7 @@ Kaisercalc is a solution for resolving calculations that is a pain in the a** to
 
 ---
 ### Line types
-there are three types of line to inform you calculations:
+There are three types of line to inform you calculations:
 * Declare
 * System functions
 * Imports
@@ -43,8 +43,7 @@ println('employees #', employees, 'payment is', taxes(employees)+salary*employee
 **imports**  
 Some times you may want to split some data into files like `finance.txt`, `study.txt` or `test02.txt`
 that way you may have the need to import data from another file, for example
-you can have a file to declare some personal data like account ballance, bills info ... when calculating currently month bills value, you can create a file january_bill.txt and import the bills.txt data, now you can access variables and functions defined in the bills.txt, next month you can delete january file and create another one.
-
+you can have a file to declare some personal data like account ballance, bills info ... when calculating currently month bills value, you can create a file january_bill.txt and import the bills.txt data, now you can access variables and functions defined in the bills.txt, next month you can delete january file and create another one.  
 the syntax to use import is `import alias file_name.txt`
 i.e
 `import bills bills.txt` `import prob functions/probs.txt`
