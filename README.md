@@ -20,4 +20,4 @@
 
 # Link to download
 
-windows amd64 [https://www.dropbox.com/s/kx1esqtvum38cmz/kaisercalc.exe?dl=0](download)
+windows amd64 [dropbox](https://www.dropbox.com/s/kx1esqtvum38cmz/kaisercalc.exe?dl=0)
