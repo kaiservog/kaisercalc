@@ -16,3 +16,8 @@
 
 ## To think  
 * functions are more legible withours "()" like "sqrt x,y= x" or "C n,p = n!/p!(m-p)!" ... "sqrt(x,y)=x" "C(n,p)=n!/p!(m-p)!"
+
+
+# Link to download
+
+windows amd64 [https://www.dropbox.com/s/kx1esqtvum38cmz/kaisercalc.exe?dl=0](download)
